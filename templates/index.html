@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Quote Generator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <section class="hero is-light is-fullheight">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title">Random Quote Generator</h1>
+                <div class="box" id="quote-box">
+                    {% if quote.error %}
+                        <p class="has-text-danger">{{ quote.error }}</p>
+                    {% else %}
+                        <p class="quote-content">"{{ quote.content }}"</p>
+                        <p class="quote-author">— {{ quote.author }}</p>
+                    {% endif %}
+                </div>
+                <button class="button is-primary is-medium" id="new-quote">New Quote</button>
+            </div>
+        </div>
+    </section>
+    <script>
+        document.getElementById('new-quote').addEventListener('click', async () => {
+            const response = await fetch('/get-quote');
+            const data = await response.json();
+            const quoteBox = document.getElementById('quote-box');
+            if (data.error) {
+                quoteBox.innerHTML = `<p class="has-text-danger">${data.error}</p>`;
+            } else {
+                quoteBox.innerHTML = `
+                    <p class="quote-content">"${data.content}"</p>
+                    <p class="quote-author">— ${data.author}</p>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
